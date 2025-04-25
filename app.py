@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 app = Flask(__name__)
-CORS(app)  # Allow requests from any origin
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
 def home():
