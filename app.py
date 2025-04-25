@@ -1,20 +1,7 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from scipy.integrate import solve_ivp
-import numpy as np
-import os
-
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-@app.route("/")
-def home():
-    return "Backend is running!"
-
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.json
-    print("Received parameters:", data)
+    print("Received parameters:", data, flush=True)
 
     a = float(data["a"])
     b = float(data["b"])
@@ -28,13 +15,15 @@ def generate():
         return [dx, dy, dz]
 
     y0 = [1.0, 1.0, 1.0]
-    t_span = (0, 100)
+    t_span = (0, 300)
     t_eval = np.linspace(*t_span, 12000)
 
     print("Starting integration...", flush=True)
-    sol = solve_ivp(rossler, t_span, y0, t_eval=t_eval, rtol=1e-9)
+    sol = solve_ivp(rossler, t_span, y0, t_eval=t_eval, rtol=1e-6)  # loosen rtol for speed
     x, y, z = sol.y
     print("Integration complete.", flush=True)
+
+    print("First few z values:", z[:10], flush=True)
 
     points = []
     crossings = 0
@@ -46,11 +35,5 @@ def generate():
             points.append({"x": px, "y": py})
             crossings += 1
 
-    print(f"Total crossings detected: {crossings}",flush=True)
-    print(f"Returning {len(points)} points",flush=True)
+    print(f"Total crossings detected: {crossings}", flush=True)
     return jsonify(points)
-
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
