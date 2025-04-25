@@ -4,7 +4,6 @@ from scipy.integrate import solve_ivp
 import numpy as np
 import os
 
-# ✅ Define app first before any routes
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
