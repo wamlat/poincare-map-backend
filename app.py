@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from scipy.integrate import solve_ivp
 import numpy as np
+import os
 
 app = Flask(__name__)
 CORS(app)  # Allow requests from any origin
