@@ -29,7 +29,7 @@ def generate():
 
     y0 = [1.0, 1.0, 1.0]
     t_span = (0, 100)
-    t_eval = np.linspace(*t_span, 5000)
+    t_eval = np.linspace(*t_span, 12000)
 
     print("Starting integration...")
     sol = solve_ivp(rossler, t_span, y0, t_eval=t_eval, rtol=1e-9)
@@ -37,13 +37,16 @@ def generate():
     print("Integration complete.")
 
     points = []
+    crossings = 0
     for i in range(1, len(z)):
         if z[i - 1] < 0 and z[i] >= 0:
             alpha = -z[i - 1] / (z[i] - z[i - 1])
             px = x[i - 1] + alpha * (x[i] - x[i - 1])
             py = y[i - 1] + alpha * (y[i] - y[i - 1])
             points.append({"x": px, "y": py})
+            crossings += 1
 
+    print(f"Total crossings detected: {crossings}")
     print(f"Returning {len(points)} points")
     return jsonify(points)
 
